@@ -1,0 +1,43 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: "de.mannodermaus.android-junit5"
+
+apply from: "${project.rootDir}/versions.gradle"
+
+android {
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion = build_tools_version
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation project(path: ':Common')
+
+    implementation("org.lucee:commons-io:$commons_io_version")
+
+    api "com.squareup.moshi:moshi-kotlin:$square_moshi_kotlin_version"
+    api "org.junit.jupiter:junit-jupiter-api:$junit5_version"
+    api "org.junit.jupiter:junit-jupiter-params:$junit5_version"
+
+    api "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
+    api "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
+    api "org.amshove.kluent:kluent:$kluent_version"
+    api("com.github.dpreussler:KuperReflect:$kuper_reflect_version")
+    api "com.github.Aidanvii7.Toolbox:common:$toolbox_version"
+    api "org.koin:koin-test:$koin_version"
+}

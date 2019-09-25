@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+    These IDs are used as unique IDs when 'tracking' callbacks passed to binding adapters.
+    However the same technique can be used to track anything passed to a binding adapter.
+    Tracking in this context, is the essentially the ability to store and retrieve values passed into a binding adapter, directly inside the view as a keyed tag.
+    This allows us to react only to new values passed into a binding adapter, and do any relevant clean up required for the previous value - if any.
+    This is particularly useful for binding adapters used in recycled views.
+    More info: https://android.googlesource.com/platform/frameworks/data-binding/+/master/extensions/baseAdapters/src/main/java/android/databinding/adapters/ListenerUtil.java#55
+    -->
+    <id name="image_view_url" />
+
+</resources>

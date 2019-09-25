@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: "de.mannodermaus.android-junit5"
+
+apply from: "${project.rootDir}/versions.gradle"
+
+android {
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion = build_tools_version
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding.enabled = true
+}
+
+dependencies {
+    // TODO can any of these be implementation dependencies?..
+    api project(path: ':FeatureCommon')
+    implementation project(path: ':Common')
+    implementation project(path: ':Core')
+
+    // Toolbox (source: https://github.com/Aidanvii7/Toolbox)
+    api "com.github.Aidanvii7.Toolbox:adapterviews-databinding-recyclerpager:$toolbox_version"
+    api "com.github.Aidanvii7.Toolbox:adapterviews-databinding-recyclerview:$toolbox_version"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit5_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+    testImplementation project(path: ':TestUtils')
+}

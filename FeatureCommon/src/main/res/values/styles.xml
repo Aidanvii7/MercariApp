@@ -1,0 +1,57 @@
+<resources>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/ToolbarTheme</item>
+    </style>
+
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="toolbarStyle">@style/ToolbarTheme</item>
+    </style>
+
+    <style name="AccentStyle" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+        <item name="titleTextAppearance">@style/Toolbar.TitleText</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="AccentStyle">
+        <item name="android:paddingStart">10dp</item>
+    </style>
+
+    <style name="TabLayoutTheme" parent="AccentStyle">
+        <item name="android:paddingStart">10dp</item>
+        <item name="tabIndicatorHeight">5dp</item>
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="TabLayoutStyle" parent="Widget.Design.TabLayout">
+        <item name="android:background">@color/colorAccent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+        <item name="tabIndicatorHeight">4dp</item>
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+    </style>
+
+
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Style_ShimmerFrameLayout">
+        <item name="shimmer_highlight_color">@android:color/transparent</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="shimmer_auto_start">true</item>
+    </style>
+
+</resources>

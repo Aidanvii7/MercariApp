@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: "de.mannodermaus.android-junit5"
+
+apply from: "${project.rootDir}/versions.gradle"
+
+android {
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion = build_tools_version
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding.enabled = true
+}
+
+dependencies {
+    implementation project(path: ':Core')
+    implementation project(path: ':Common')
+    api "androidx.cardview:cardview:$androidx_cardview_version"
+    api("androidx.appcompat:appcompat:$androidx_appcompat_version") {
+        exclude group: "com.android.support"
+    }
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_viewmodel_ktx_version"
+    api "androidx.legacy:legacy-support-v4:$androidx_legacy_version"
+    api "com.google.android.material:material:$google_material_version"
+    api "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
+
+    api "com.github.Aidanvii7.Toolbox:databinding-arch-viewmodel:$toolbox_version"
+    api "com.github.Aidanvii7.Toolbox:delegates-observable-databinding:$toolbox_version"
+    api "com.github.Aidanvii7.Toolbox:databinding-design:$toolbox_version"
+
+    api "com.facebook.shimmer:shimmer:$facebook_shimmer_version"
+
+    api "org.koin:koin-android-viewmodel:$koin_version"
+    api "org.koin:koin-android-scope:$koin_version"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit5_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+    testImplementation project(path: ':TestUtils')
+}

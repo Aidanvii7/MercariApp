@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorAccent">#F7455A</color>
+    <color name="cardForegroundShimmer">#AA7E7E7E</color>
+</resources>

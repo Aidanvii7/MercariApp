@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.mercariapp.feature.common.presentation.ProductViewModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/card_product_image_margin"
+        android:transitionName="transition"
+        app:onClickProduct="@{viewModel.product}"
+        tools:targetApi="lollipop">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/icon_like"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@null"
+                android:src="@drawable/icon_like"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/text_likes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@{String.valueOf(viewModel.likeCount)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/icon_like"
+                app:layout_constraintTop_toBottomOf="@+id/product_image"
+                tools:text="100" />
+
+            <ImageView
+                android:id="@+id/icon_comment"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:layout_marginStart="8dp"
+                android:contentDescription="@null"
+                android:src="@drawable/icon_comment"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/text_likes" />
+
+            <TextView
+                android:id="@+id/text_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@{String.valueOf(viewModel.commentCount)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/icon_comment"
+                app:layout_constraintTop_toBottomOf="@+id/product_image"
+                tools:text="200" />
+
+
+            <TextView
+                android:id="@+id/text_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@{@string/text_price(viewModel.price)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/product_image"
+                tools:text="¥45" />
+
+            <com.mercariapp.feature.common.ui.AspectRatioAppCompatImageView
+                android:id="@+id/product_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:contentDescription="@null"
+                android:visibility="visible"
+                app:aspectRatio="@{1f}"
+                app:imageUrl="@{viewModel.imageUrl}"
+                app:layout_constraintBottom_toTopOf="@id/icon_like"
+                tools:layout_height="190dp"
+                tools:layout_width="190dp" />
+
+            <TextView
+                android:id="@+id/text_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="@{String.valueOf(viewModel.name)}"
+                app:layout_constraintBottom_toBottomOf="@id/product_image"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Product name" />
+
+            <ImageView
+                android:id="@+id/badge_soldout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:scaleType="fitStart"
+                android:src="@drawable/badge_soldout"
+                android:visibility="gone"
+                app:goneUnless="@{viewModel.soldOut}"
+                app:layout_constraintBottom_toBottomOf="@id/product_image"
+                app:layout_constraintEnd_toEndOf="@id/product_image"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/product_image"
+                app:layout_constraintTop_toTopOf="@id/product_image"
+                app:layout_constraintVertical_bias="0.0"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

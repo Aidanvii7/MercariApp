@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/destination_browse_products">
+
+    <fragment
+        android:id="@+id/destination_browse_products"
+        android:name="com.mercariapp.feature.browseproducts.presentation.BrowseProductsFragment"
+        android:label="BrowseProductsFragment">
+        <action
+            android:id="@+id/action_destination_browse_products_to_destination_view_product"
+            app:destination="@id/destination_view_product" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/destination_view_product"
+        android:name="com.mercariapp.feature.viewproduct.presentation.ViewProductFragment"
+        android:label="ViewProductFragment">
+        <argument
+            android:name="product"
+            app:argType="com.mercariapp.core.domain.Product" />
+    </fragment>
+</navigation>

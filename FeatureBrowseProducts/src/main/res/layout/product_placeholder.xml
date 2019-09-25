@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/card_product_image_margin">
+
+        <com.facebook.shimmer.ShimmerFrameLayout style="@style/Style_ShimmerFrameLayout">
+
+            <com.mercariapp.feature.common.ui.AspectRatioAppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:foreground="@color/cardForegroundShimmer"
+                android:scaleType="centerCrop"
+                app:aspectRatio="@{1}" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

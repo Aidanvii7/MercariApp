@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: "androidx.navigation.safeargs"
+
+apply from: "${project.rootDir}/versions.gradle"
+
+android {
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion = build_tools_version
+    defaultConfig {
+        applicationId "com.mercariapp.mercari.sample"
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            buildConfigField "String", "PRODUCT_CATEGORIES_URL", '"https://s3-ap-northeast-1.amazonaws.com/m-et/Android/json/"'
+        }
+        release {
+            buildConfigField "String", "PRODUCT_CATEGORIES_URL", '"https://s3-ap-northeast-1.amazonaws.com/m-et/Android/json/"'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding.enabled = true
+}
+
+dependencies {
+    implementation project(path: ':Common')
+    implementation project(path: ':CoreImplementation')
+    implementation project(path: ':FeatureCommonImplementation')
+    implementation project(path: ':FeatureBrowseProducts')
+    implementation project(path: ':FeatureViewProduct')
+
+    implementation "androidx.navigation:navigation-fragment-ktx:$androidx_navigation_version"
+
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$square_leak_canary_version"
+
+    // JUnit5 Jupiter
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit5_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit5_version"
+
+    testImplementation project(path: ':Core')
+    testImplementation project(path: ':TestUtils')
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.mercariapp.feature.browseproducts.presentation.ProductCategoryViewModel" />
+    </data>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:loaderArrowColor="@{@color/colorPrimary}"
+        app:loaderBackgroundColor="@{@color/colorAccent}"
+        app:refreshing="@={viewModel.refreshing}">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:binder="@{viewModel.binder}"
+            app:items="@{viewModel.productAdapterItems}"
+            tools:layoutManager="GridLayoutManager"
+            tools:listitem="@layout/product"
+            tools:orientation="vertical"
+            tools:spanCount="2" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>
