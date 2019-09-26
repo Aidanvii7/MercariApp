@@ -1,8 +1,11 @@
 package com.mercariapp.mercari
 
+import android.app.Application
 import com.mercariapp.core.domain.Product
 import com.mercariapp.core.domain.ProductCategory
 import com.mercariapp.testutils.parameterBindingsFor
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.setMain
@@ -12,12 +15,20 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.koin.core.KoinApplication
 import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 import org.koin.test.check.checkModules
 
 @ExperimentalCoroutinesApi
 internal class MercariAppTest {
 
     val appModules = MercariApp.appModules.toList()
+    val stubModule = module {
+        single {
+            mock<Application> {
+                on { applicationContext } doReturn mock()
+            }
+        }
+    }
 
     @Nested
     @DisplayName("When building Koin dependency graph")
@@ -29,7 +40,7 @@ internal class MercariAppTest {
         fun givenWhen() {
             Dispatchers.setMain(Dispatchers.Unconfined)
             koinApplication = koinApplication {
-                modules(appModules)
+                modules(appModules + stubModule)
             }
         }
 

@@ -39,6 +39,11 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:$square_moshi_kotlin_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$square_moshi_kotlin_version"
 
+    //Room
+    implementation "androidx.room:room-runtime:$androidx_room_version"
+    implementation "androidx.room:room-ktx:$androidx_room_version"
+    kapt "androidx.room:room-compiler:$androidx_room_version"
+
     implementation "org.koin:koin-android-scope:$koin_version"
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5_version"

@@ -16,6 +16,7 @@ import com.mercariapp.feature.browseproducts.domain.GetProductsInCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class ProductCategoriesViewModel(
     private val getProductCategories: GetProductCategories,
@@ -30,13 +31,13 @@ internal class ProductCategoriesViewModel(
         .doOnTrue {
             CoroutineScope(coroutineDispatchers.main + job).launch {
                 try {
-                    this@ProductCategoriesViewModel.logD("fetchAndBuildAdapterItems start")
+                    this@ProductCategoriesViewModel.logD("refreshing = true")
                     productCategoryAdapterItems = fetchAndBuildAdapterItems()
-                    this@ProductCategoriesViewModel.logD("fetchAndBuildAdapterItems succeeded")
+                    this@ProductCategoriesViewModel.logD("refreshing = false")
                     refreshing = false
                     return@launch
                 } catch (e: Throwable) {
-                    this@ProductCategoriesViewModel.logD("fetchAndBuildAdapterItems failed")
+                    this@ProductCategoriesViewModel.logD("refreshing failed")
                     //TODO: log error
                 }
                 refreshing = false
@@ -59,11 +60,14 @@ internal class ProductCategoriesViewModel(
     private val job = SupervisorJob()
 
     private suspend fun fetchAndBuildAdapterItems(): List<ProductCategoryAdapterItem> =
-        getProductCategories().map { productCategory ->
-            ProductCategoryAdapterItem(
-                productCategory = productCategory,
-                getProductsInCategory = getProductsInCategory
-            )
+        withContext(coroutineDispatchers.default) {
+            this@ProductCategoriesViewModel.logD("fetchAndBuildAdapterItems")
+            getProductCategories().map { productCategory ->
+                ProductCategoryAdapterItem(
+                    productCategory = productCategory,
+                    getProductsInCategory = getProductsInCategory
+                )
+            }
         }
 
     override fun onCleared() {

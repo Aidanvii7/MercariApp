@@ -1,4 +1,4 @@
-package com.mercariapp.core.implementation.data
+package com.mercariapp.core.implementation.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Url

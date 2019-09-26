@@ -17,6 +17,7 @@ import com.mercariapp.feature.common.ui.createGridLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 internal class ProductCategoryViewModel(
     private val productCategory: ProductCategory,
@@ -31,14 +32,14 @@ internal class ProductCategoryViewModel(
         .doOnTrue {
             CoroutineScope(coroutineDispatchers.main + job).launch {
                 try {
-                    this@ProductCategoryViewModel.logD("fetchAndBuildAdapterItems for: ${productCategory.name} start")
+                    this@ProductCategoryViewModel.logD("refreshing = true for: ${productCategory.name} start")
                     productAdapterItems = placeholders
                     productAdapterItems = fetchAndBuildAdapterItems()
-                    this@ProductCategoryViewModel.logD("fetchAndBuildAdapterItems for: ${productCategory.name} succeeded")
+                    this@ProductCategoryViewModel.logD("refreshing = false for: ${productCategory.name} succeeded")
                     refreshing = false
                     return@launch
                 } catch (e: Throwable) {
-                    this@ProductCategoryViewModel.logD("fetchAndBuildAdapterItems for: ${productCategory.name} failed")
+                    this@ProductCategoryViewModel.logD("refreshing failed for: ${productCategory.name} failed")
                     //TODO: log error
                 }
                 refreshing = false
@@ -63,7 +64,10 @@ internal class ProductCategoryViewModel(
     private val job = SupervisorJob()
 
     private suspend fun fetchAndBuildAdapterItems(): List<ProductAdapterItem> =
-        getProductsInCategory(productCategory).map { ProductAdapterItem.buildWith(it) }
+        withContext(coroutineDispatchers.default) {
+            this@ProductCategoryViewModel.logD("fetchAndBuildAdapterItems for: ${productCategory.name}")
+            getProductsInCategory(productCategory).map { ProductAdapterItem.buildWith(it) }
+        }
 
     override fun onDisposed() {
         job.cancel()

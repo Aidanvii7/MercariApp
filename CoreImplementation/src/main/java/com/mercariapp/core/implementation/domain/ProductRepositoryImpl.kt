@@ -5,19 +5,17 @@ import com.mercariapp.common.utils.logger.logD
 import com.mercariapp.core.domain.Product
 import com.mercariapp.core.domain.ProductCategory
 import com.mercariapp.core.domain.ProductRepository
-import com.mercariapp.core.implementation.data.ProductApiService
-import com.mercariapp.core.implementation.mappers.toProductCategories
-import com.mercariapp.core.implementation.mappers.toProducts
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.mercariapp.core.implementation.data.database.ProductDatabase
+import com.mercariapp.core.implementation.data.network.ProductApiService
+import com.mercariapp.core.implementation.mappers.toDomainProductCategories
+import com.mercariapp.core.implementation.mappers.toDomainProducts
+import com.mercariapp.core.implementation.mappers.toRoomProductCategories
+import com.mercariapp.core.implementation.mappers.toRoomProductsWith
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.coroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 internal class ProductRepositoryImpl(
-    private val apiService: ProductApiService,
+    private val productService: ProductApiService,
+    private val productDatabase: ProductDatabase,
     private val dispatchers: CoroutineDispatchers
 ) : ProductRepository {
 
@@ -25,12 +23,16 @@ internal class ProductRepositoryImpl(
         return withContext(dispatchers.io) {
             try {
                 this@ProductRepositoryImpl.logD("getProductCategories start")
-                val apiProductCategories = apiService.getProductCategories()
+                val dtoProductCategories = productService.getProductCategories()
                 this@ProductRepositoryImpl.logD("getProductCategories succeeded")
-                apiProductCategories.toProductCategories()
+                dtoProductCategories.toDomainProductCategories().also { domainProductCategories ->
+                    val roomProductCategories = domainProductCategories.toRoomProductCategories()
+                    productDatabase.productCategoryDao().addProductCategories(roomProductCategories)
+                }
             } catch (e: Throwable) {
                 this@ProductRepositoryImpl.logD("getProductCategories failed")
-                throw e
+                val roomProductCategories = productDatabase.productCategoryDao().getProductCategories()
+                return@withContext roomProductCategories.toDomainProductCategories()
             }
         }
     }
@@ -39,12 +41,16 @@ internal class ProductRepositoryImpl(
         return withContext(dispatchers.io) {
             try {
                 this@ProductRepositoryImpl.logD("getProductsIn: ${productCategory.name} start")
-                val apiProducts = apiService.getProducts(productCategory.dataEndpoint)
+                val dtoProducts = productService.getProducts(productCategory.dataEndpoint)
                 this@ProductRepositoryImpl.logD("getProductsIn: ${productCategory.name} succeeded")
-                apiProducts.toProducts()
+                dtoProducts.toDomainProducts().also { domainProducts ->
+                    val roomProducts = domainProducts.toRoomProductsWith(productCategory.name)
+                    productDatabase.productDao().addProducts(roomProducts)
+                }
             } catch (e: Throwable) {
                 this@ProductRepositoryImpl.logD("getProductsIn: ${productCategory.name} failed")
-                throw e
+                val roomProducts = productDatabase.productDao().getProductsInCategory(productCategory.name)
+                return@withContext roomProducts.toDomainProducts()
             }
         }
     }

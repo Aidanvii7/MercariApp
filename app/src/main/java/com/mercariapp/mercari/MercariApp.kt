@@ -27,7 +27,9 @@ class MercariApp : Application() {
     }
 
     private fun initLogger() {
-        CompositeLogger += AndroidLogger(defaultTag = "MercariApp")
+        if (BuildConfig.DEBUG) {
+            CompositeLogger += AndroidLogger(defaultTag = "MercariApp")
+        }
     }
 
     private fun initKoin() {

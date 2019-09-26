@@ -1,6 +1,3 @@
-# 367aba7d05325edb037373e9672ae932f4f3cafd
-Deadline: 2019-09-18T23:59:59+09:00
-
 # Mini Mercari App
 
 ## Tech Stack
@@ -20,7 +17,7 @@ Deadline: 2019-09-18T23:59:59+09:00
   - [Kluent](https://github.com/MarkusAmshove/Kluent)
 
 ## Demo
-[Download the apk](https://drive.google.com/file/d/1MJC7gc8byDHA5wk3QABJw3HJ8dcQEvdl/view?usp=sharing)
+[Download the apk](https://drive.google.com/file/d/1Ku1ao3rtsh-CKEBxd7IQuP8Ef3xgDd3B/view?usp=sharing)
 
 [Demo video](https://drive.google.com/file/d/1ulvImdZRU_GLRDvlN7qhqGQxrs9RnYDP/view?usp=sharing)
 

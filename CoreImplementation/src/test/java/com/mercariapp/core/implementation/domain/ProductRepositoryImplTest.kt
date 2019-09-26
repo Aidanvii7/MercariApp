@@ -2,14 +2,21 @@ package com.mercariapp.core.implementation.domain
 
 import com.mercariapp.core.domain.Product
 import com.mercariapp.core.domain.ProductCategory
-import com.mercariapp.core.implementation.data.ProductDto
-import com.mercariapp.core.implementation.data.ProductCategoryDto
-import com.mercariapp.core.implementation.data.ProductApiService
+import com.mercariapp.core.implementation.data.database.ProductCategoryDao
+import com.mercariapp.core.implementation.data.database.ProductDao
+import com.mercariapp.core.implementation.data.database.ProductDatabase
+import com.mercariapp.core.implementation.data.database.RoomProduct
+import com.mercariapp.core.implementation.data.database.RoomProductCategory
+import com.mercariapp.core.implementation.data.network.ProductDto
+import com.mercariapp.core.implementation.data.network.ProductCategoryDto
+import com.mercariapp.core.implementation.data.network.ProductApiService
 import com.mercariapp.testutils.deserializeToListWith
 import com.mercariapp.testutils.stringResource
 import com.mercariapp.testutils.synchronousCoroutineDispatchers
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verifyBlocking
+import com.nhaarman.mockitokotlin2.whenever
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,13 +28,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import java.io.IOException
 
 @ExperimentalCoroutinesApi
 internal class ProductRepositoryImplTest {
-
-    companion object {
-        const val allProductsEndpoint = "https://s3-ap-northeast-1.amazonaws.com/m-et/Android/json/all.json"
-    }
 
     val moshi: Moshi by lazy {
         //TODO: use generated type adapters instead of reflection version
@@ -41,29 +45,116 @@ internal class ProductRepositoryImplTest {
     val allProductsFromApi: List<ProductDto>
         get() = stringResource("api/product_category_all.json").deserializeToListWith(moshi)
 
-    val mockProductApiService = mock<ProductApiService> {
-        onBlocking { getProductCategories() } doReturn productCategoriesFromApi
-        onBlocking { getProducts(allProductsEndpoint) } doReturn allProductsFromApi
+    val productsCategories = productCategoriesFromApi.map { ProductCategory(it.name!!, it.dataEndpoint!!) }
+    val allProducts = allProductsFromApi.map {
+        Product(
+            id = it.id!!,
+            name = it.name!!,
+            status = when (it.status) {
+                "on_sale" -> Product.Status.ON_SALE
+                "sold_out" -> Product.Status.SOLD_OUT
+                else -> null
+            }!!,
+            likeCount = it.likeCount!!,
+            commentCount = it.commentCount!!,
+            priceInYen = it.priceInYen!!,
+            photoUrl = it.photoUrl!!
+        )
     }
 
+
+    val roomProductCategories = productsCategories.map { RoomProductCategory(it.name, it.dataEndpoint) }
+
+    val allRoomProducts = allProducts.map {
+        RoomProduct(
+            primaryKey = "${productsCategories.first().name}:${it.id}",
+            id = it.id,
+            name = it.name,
+            status = when (it.status) {
+                Product.Status.ON_SALE -> "on_sale"
+                Product.Status.SOLD_OUT -> "sold_out"
+            },
+            likeCount = it.likeCount,
+            commentCount = it.commentCount,
+            priceInYen = it.priceInYen,
+            photoUrl = it.photoUrl,
+            categoryName = productsCategories.first().name
+        )
+    }
+
+    val mockProductCategoryDao = mock<ProductCategoryDao> {
+        onBlocking { getProductCategories() } doReturn roomProductCategories
+    }
+
+    val mockProductDao = mock<ProductDao> {
+        onBlocking { getProductsInCategory(productsCategories.first().name) } doReturn allRoomProducts
+    }
+
+    val mockProductDatabase = mock<ProductDatabase> {
+        on { productCategoryDao() } doReturn mockProductCategoryDao
+        on { productDao() } doReturn mockProductDao
+    }
+
+    val mockProductApiService = mock<ProductApiService>()
+
     val tested = ProductRepositoryImpl(
-        apiService = mockProductApiService,
+        productService = mockProductApiService,
+        productDatabase = mockProductDatabase,
         dispatchers = synchronousCoroutineDispatchers
     )
 
+    private fun ProductApiService.prepareForSuccess() {
+        runBlocking {
+            whenever(getProductCategories()).thenReturn(productCategoriesFromApi)
+            whenever(getProducts(productsCategories.first().dataEndpoint)).thenReturn(allProductsFromApi)
+        }
+    }
+
+    private fun ProductApiService.prepareForFailure() {
+        runBlocking {
+            whenever(getProductCategories()).then { throw IOException() }
+            whenever(getProducts(productsCategories.first().dataEndpoint)).then { throw IOException() }
+        }
+    }
+
     @Nested
-    @DisplayName("When getProductCategories is called")
-    inner class GetProductCategories {
+    @DisplayName("When getProductCategories is called when a network connection is available")
+    inner class GetProductCategoriesWithNetwork : GetProductCategories() {
+
+        override fun setup() {
+            mockProductApiService.prepareForSuccess()
+        }
+
+        @Test
+        @DisplayName("Adds product categories to database")
+        fun addsToDatabase() {
+            verifyBlocking(mockProductCategoryDao) { addProductCategories(roomProductCategories) }
+        }
+    }
+
+    @Nested
+    @DisplayName("When getProductCategories is called when a network connection is not available")
+    inner class GetProductCategoriesWithoutNetwork : GetProductCategories() {
+
+        override fun setup() {
+            mockProductApiService.prepareForFailure()
+        }
+    }
+
+    abstract inner class GetProductCategories {
 
         lateinit var productCategories: List<ProductCategory>
 
         @BeforeEach
         fun givenWhen() {
+            setup()
             productCategories = runBlocking { tested.getProductCategories() }
             if (productCategories.count() != productCategoriesFromApi.count()) {
                 fail("The amount of product categories was inconsistent")
             }
         }
+
+        abstract fun setup()
 
         @Test
         @DisplayName("names are correct")
@@ -91,18 +182,43 @@ internal class ProductRepositoryImplTest {
     }
 
     @Nested
-    @DisplayName("When getProductsIn is called")
-    inner class GetMensProduct {
+    @DisplayName("When getProductsIn category is called when a network connection is available")
+    inner class GetMensProductsWithNetwork : GetMensProducts() {
+
+        override fun setup() {
+            mockProductApiService.prepareForSuccess()
+        }
+
+        @Test
+        @DisplayName("Adds products to database")
+        fun addsToDatabase() {
+            verifyBlocking(mockProductDao) { addProducts(allRoomProducts) }
+        }
+    }
+
+    @Nested
+    @DisplayName("When getProductsIn category is called when a network connection is not available")
+    inner class GetMensProductsWithoutNetwork : GetMensProducts() {
+
+        override fun setup() {
+            mockProductApiService.prepareForFailure()
+        }
+    }
+
+    abstract inner class GetMensProducts {
 
         lateinit var products: List<Product>
 
         @BeforeEach
         fun givenWhen() {
-            products = runBlocking { tested.getProductsIn(ProductCategory("Men", allProductsEndpoint)) }
+            setup()
+            products = runBlocking { tested.getProductsIn(productsCategories.first()) }
             if (products.count() != allProductsFromApi.count()) {
                 fail("The amount of products was inconsistent")
             }
         }
+
+        abstract fun setup()
 
         @Test
         @DisplayName("ids are correct")
@@ -173,5 +289,4 @@ internal class ProductRepositoryImplTest {
             }
         }
     }
-
 }

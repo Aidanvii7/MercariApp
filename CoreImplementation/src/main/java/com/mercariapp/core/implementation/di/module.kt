@@ -1,8 +1,10 @@
 package com.mercariapp.core.implementation.di
 
-import com.mercariapp.common.utils.logger.logD
-import com.mercariapp.core.implementation.data.ProductApiService
+import android.app.Application
+import androidx.room.Room
+import com.mercariapp.core.implementation.data.network.ProductApiService
 import com.mercariapp.core.domain.ProductRepository
+import com.mercariapp.core.implementation.data.database.ProductDatabase
 import com.mercariapp.core.implementation.domain.ProductRepositoryImpl
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.squareup.moshi.Moshi
@@ -48,10 +50,18 @@ val coreImplementationModule = module {
     }
     factory { get<Retrofit>().create(ProductApiService::class.java) }
 
+    factory {
+        Room.databaseBuilder(
+            get<Application>().applicationContext,
+            ProductDatabase::class.java,
+            "product_database"
+        ).build()
+    }
     single<ProductRepository> {
         ProductRepositoryImpl(
-            apiService = get(),
-            dispatchers = get()
+            productService = get(),
+            dispatchers = get(),
+            productDatabase = get()
         )
     }
 }
