@@ -17,7 +17,7 @@
   - [Kluent](https://github.com/MarkusAmshove/Kluent)
 
 ## Demo
-[Download the apk](https://drive.google.com/file/d/1Ku1ao3rtsh-CKEBxd7IQuP8Ef3xgDd3B/view?usp=sharing)
+[Download the apk](https://drive.google.com/file/d/1bT0Ir-F7ZIcUyCY1BBeXWIVjp2RVqG_5/view?usp=sharing)
 
 [Demo video](https://drive.google.com/file/d/1ulvImdZRU_GLRDvlN7qhqGQxrs9RnYDP/view?usp=sharing)
 
