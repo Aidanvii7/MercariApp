@@ -1,8 +1,10 @@
 package com.mercariapp.core.domain
 
+import io.reactivex.Single
+
 interface ProductRepository {
 
-    suspend fun getProductCategories(): List<ProductCategory>
+    fun getProductCategories(): Single<List<ProductCategory>>
 
-    suspend fun getProductsIn(productCategory: ProductCategory): List<Product>
+    fun getProductsIn(productCategory: ProductCategory): Single<List<Product>>
 }

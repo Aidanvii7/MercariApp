@@ -32,6 +32,7 @@ dependencies {
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$square_retrofit2_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$square_retrofit2_rxadapter_version"
     implementation "com.squareup.retrofit2:converter-moshi:$square_retrofit2_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$square_okhttp3_logging_interceptor_version"
 
@@ -41,6 +42,7 @@ dependencies {
 
     //Room
     implementation "androidx.room:room-runtime:$androidx_room_version"
+    implementation "androidx.room:room-rxjava2:$androidx_room_version"
     implementation "androidx.room:room-ktx:$androidx_room_version"
     kapt "androidx.room:room-compiler:$androidx_room_version"
 

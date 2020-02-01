@@ -9,39 +9,33 @@ import com.aidanvii.toolbox.databinding.bindable
 import com.aidanvii.toolbox.delegates.observable.doOnNextWithPrevious
 import com.aidanvii.toolbox.delegates.observable.doOnTrue
 import com.aidanvii.toolbox.delegates.observable.onFirstAccess
-import com.mercariapp.common.utils.CoroutineDispatchers
-import com.mercariapp.common.utils.logger.logD
+import com.mercariapp.common.utils.RxSchedulers
 import com.mercariapp.feature.browseproducts.domain.GetProductCategories
 import com.mercariapp.feature.browseproducts.domain.GetProductsInCategory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.Single
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 
 internal class ProductCategoriesViewModel(
     private val getProductCategories: GetProductCategories,
     private val getProductsInCategory: GetProductsInCategory,
     @VisibleForTesting
-    private val coroutineDispatchers: CoroutineDispatchers = CoroutineDispatchers.DEFAULT
+    private val schedulers: RxSchedulers = RxSchedulers.DEFAULT
 ) : ObservableArchViewModel() {
 
     @get:Bindable
     var refreshing: Boolean by bindable(false)
         .onFirstAccess { refreshing = true }
         .doOnTrue {
-            CoroutineScope(coroutineDispatchers.main + job).launch {
-                try {
-                    this@ProductCategoriesViewModel.logD("refreshing = true")
-                    productCategoryAdapterItems = fetchAndBuildAdapterItems()
-                    this@ProductCategoriesViewModel.logD("refreshing = false")
+            disposable = fetchAndBuildAdapterItems()
+                .observeOn(schedulers.main)
+                .subscribeBy(
+                    onError = { /* TODO log error */ }
+                ) { productCategoryAdapterItems ->
+                    this.productCategoryAdapterItems = productCategoryAdapterItems
                     refreshing = false
-                    return@launch
-                } catch (e: Throwable) {
-                    this@ProductCategoriesViewModel.logD("refreshing failed")
-                    //TODO: log error
+
                 }
-                refreshing = false
-            }
         }
 
     @get:Bindable
@@ -57,21 +51,21 @@ internal class ProductCategoriesViewModel(
         hasMultipleViewTypes = false
     )
 
-    private val job = SupervisorJob()
+    private var disposable: Disposable? = null
 
-    private suspend fun fetchAndBuildAdapterItems(): List<ProductCategoryAdapterItem> =
-        withContext(coroutineDispatchers.default) {
-            this@ProductCategoriesViewModel.logD("fetchAndBuildAdapterItems")
-            getProductCategories().map { productCategory ->
-                ProductCategoryAdapterItem(
-                    productCategory = productCategory,
-                    getProductsInCategory = getProductsInCategory
-                )
+    private fun fetchAndBuildAdapterItems(): Single<List<ProductCategoryAdapterItem>> =
+        getProductCategories().observeOn(schedulers.computation)
+            .map { productCategories ->
+                productCategories.map { productCategory ->
+                    ProductCategoryAdapterItem(
+                        productCategory = productCategory,
+                        getProductsInCategory = getProductsInCategory
+                    )
+                }
             }
-        }
 
     override fun onCleared() {
-        job.cancel()
+        disposable?.dispose()
         productCategoryAdapterItems = emptyList()
     }
 }

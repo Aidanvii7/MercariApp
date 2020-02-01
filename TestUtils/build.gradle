@@ -34,7 +34,6 @@ dependencies {
     api "org.junit.jupiter:junit-jupiter-params:$junit5_version"
 
     api "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
     api "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
     api "org.amshove.kluent:kluent:$kluent_version"
     api("com.github.dpreussler:KuperReflect:$kuper_reflect_version")

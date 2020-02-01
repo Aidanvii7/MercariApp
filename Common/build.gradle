@@ -29,7 +29,9 @@ android {
 dependencies {
     // Kotlin stdlib etc
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+    api "io.reactivex.rxjava2:rxandroid:$rxjava_android_version"
+    api "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    api "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
 
     api "com.github.Aidanvii7.Toolbox:common:$toolbox_version"
 
