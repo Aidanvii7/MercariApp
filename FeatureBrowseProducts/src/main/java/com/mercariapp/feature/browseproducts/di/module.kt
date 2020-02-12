@@ -15,8 +15,7 @@ val featureBrowseProductsModule = module {
 
     viewModel {
         ProductCategoriesViewModel(
-            getProductCategories = get(),
-            getProductsInCategory = get()
+            getProductCategories = get()
         )
     }
 

@@ -3,7 +3,6 @@ package com.mercariapp.feature.browseproducts.presentation
 import com.mercariapp.core.domain.ProductCategory
 import com.mercariapp.core.domain.ProductRepository
 import com.mercariapp.feature.browseproducts.domain.GetProductCategories
-import com.mercariapp.feature.browseproducts.domain.GetProductsInCategory
 import com.mercariapp.testutils.synchronousCoroutineDispatchers
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -37,7 +36,6 @@ internal class ProductCategoriesViewModelTest {
     val repository = mock<ProductRepository> {
         onBlocking { getProductCategories() } doReturn productCategories
     }
-    val getProductsInCategory = GetProductsInCategory(repository)
 
     @Nested
     @DisplayName("When view model is initialised")
@@ -45,7 +43,6 @@ internal class ProductCategoriesViewModelTest {
 
         val tested = ProductCategoriesViewModel(
             getProductCategories = GetProductCategories(repository),
-            getProductsInCategory = getProductsInCategory,
             coroutineDispatchers = synchronousCoroutineDispatchers
         )
 
@@ -77,8 +74,7 @@ internal class ProductCategoriesViewModelTest {
                     size `should be equal to` 3
                     (0..1).forEach { index ->
                         this[index] `should equal` ProductCategoryAdapterItem(
-                            productCategory = productCategories[index],
-                            getProductsInCategory = getProductsInCategory
+                            productCategory = productCategories[index]
                         )
                     }
                 }

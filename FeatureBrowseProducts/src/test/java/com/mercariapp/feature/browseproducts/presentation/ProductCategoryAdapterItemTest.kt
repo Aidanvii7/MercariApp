@@ -4,7 +4,6 @@ import com.mercariapp.core.domain.ProductCategory
 import com.mercariapp.core.domain.ProductRepository
 import com.mercariapp.feature.browseproducts.R
 import com.mercariapp.feature.browseproducts.di.featureBrowseProductsModule
-import com.mercariapp.feature.browseproducts.domain.GetProductsInCategory
 import com.mercariapp.testutils.KoinExtension
 import com.nhaarman.mockitokotlin2.mock
 import org.amshove.kluent.`should be equal to`
@@ -25,8 +24,7 @@ internal class ProductCategoryAdapterItemTest {
         productCategory = ProductCategory(
             name = "All",
             dataEndpoint = "https://s3-ap-northeast-1.amazonaws.com/m-et/Android/json/all.json"
-        ),
-        getProductsInCategory = GetProductsInCategory(mock())
+        )
     )
 
     @Test

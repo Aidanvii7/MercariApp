@@ -20,7 +20,6 @@ import kotlinx.coroutines.withContext
 
 internal class ProductCategoriesViewModel(
     private val getProductCategories: GetProductCategories,
-    private val getProductsInCategory: GetProductsInCategory,
     @VisibleForTesting
     private val coroutineDispatchers: CoroutineDispatchers = CoroutineDispatchers.DEFAULT
 ) : ObservableArchViewModel() {
@@ -64,8 +63,7 @@ internal class ProductCategoriesViewModel(
             this@ProductCategoriesViewModel.logD("fetchAndBuildAdapterItems")
             getProductCategories().map { productCategory ->
                 ProductCategoryAdapterItem(
-                    productCategory = productCategory,
-                    getProductsInCategory = getProductsInCategory
+                    productCategory = productCategory
                 )
             }
         }

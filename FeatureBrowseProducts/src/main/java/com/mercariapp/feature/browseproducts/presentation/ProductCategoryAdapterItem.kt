@@ -10,8 +10,7 @@ import org.koin.core.get
 import org.koin.core.parameter.parametersOf
 
 internal data class ProductCategoryAdapterItem(
-    private val productCategory: ProductCategory,
-    private val getProductsInCategory: GetProductsInCategory
+    private val productCategory: ProductCategory
 ) : BindableAdapterItem, KoinComponent {
     override val layoutId get() = R.layout.product_category
     override val lazyBindableItem = unsafeLazy { get<ProductCategoryViewModel> { parametersOf(productCategory) } }
